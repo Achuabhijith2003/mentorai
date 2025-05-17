@@ -3,4 +3,8 @@ class AppImages {
   static String kOnboarding1 = 'Assets/images/onboarding_1.png';
   static String kOnboarding2 = 'Assets/images/onboarding_2.png';
   static String kOnboarding3 = 'Assets/images/onboarding_3.png';
+
+// Login images or icons
+  static String kFaceBook = 'Assets/svg/facebook.svg';
+  static String kGoogle = 'Assets/svg/google.svg';
 }

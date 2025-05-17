@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:mentorai/Assets/image.dart';
+import 'package:mentorai/Screens/Auth/login.dart';
 import 'package:mentorai/theme/color.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:animate_do/animate_do.dart';
 
 class EdenOnboardingView extends StatefulWidget {
-  const EdenOnboardingView({
-    super.key,
-  });
+  const EdenOnboardingView({super.key});
 
   @override
   State<EdenOnboardingView> createState() => _EdenOnboardingViewState();
@@ -21,25 +20,26 @@ class _EdenOnboardingViewState extends State<EdenOnboardingView> {
     return Scaffold(
       backgroundColor: AppColors.kWhite,
       extendBodyBehindAppBar: true,
-      appBar: _currentIndex > 0
-          ? AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              leadingWidth: 70,
-              leading: Padding(
-                padding: const EdgeInsets.all(7),
-                child: CustomIconButton(
-                  onTap: () {
-                    _pageController.previousPage(
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.ease,
-                    );
-                  },
-                  icon: '',
+      appBar:
+          _currentIndex > 0
+              ? AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                leadingWidth: 70,
+                leading: Padding(
+                  padding: const EdgeInsets.all(7),
+                  child: CustomIconButton(
+                    onTap: () {
+                      _pageController.previousPage(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.ease,
+                      );
+                    },
+                    icon: '',
+                  ),
                 ),
-              ),
-            )
-          : null,
+              )
+              : null,
       body: Column(
         children: [
           Stack(
@@ -64,9 +64,7 @@ class _EdenOnboardingViewState extends State<EdenOnboardingView> {
                 });
               },
               itemBuilder: (context, index) {
-                return OnboardingCard(
-                  onboarding: onboardingList[index],
-                );
+                return OnboardingCard(onboarding: onboardingList[index]);
               },
             ),
           ),
@@ -80,6 +78,10 @@ class _EdenOnboardingViewState extends State<EdenOnboardingView> {
             child: PrimaryButton(
               onTap: () {
                 if (_currentIndex == (onboardingList.length - 1)) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SignInView()),
+                  );
                 } else {
                   _pageController.nextPage(
                     duration: const Duration(milliseconds: 500),
@@ -87,9 +89,10 @@ class _EdenOnboardingViewState extends State<EdenOnboardingView> {
                   );
                 }
               },
-              text: _currentIndex == (onboardingList.length - 1)
-                  ? 'Get Started'
-                  : 'Continue',
+              text:
+                  _currentIndex == (onboardingList.length - 1)
+                      ? 'Get Started'
+                      : 'Continue',
             ),
           ),
           CustomTextButton(
@@ -97,9 +100,10 @@ class _EdenOnboardingViewState extends State<EdenOnboardingView> {
               if (_currentIndex == (onboardingList.length - 1)) {
               } else {}
             },
-            text: _currentIndex == (onboardingList.length - 1)
-                ? 'Sign in instead'
-                : 'Skip',
+            text:
+                _currentIndex == (onboardingList.length - 1)
+                    ? 'Sign in instead'
+                    : 'Skip',
           ),
           const SizedBox(height: 20),
         ],
@@ -107,7 +111,6 @@ class _EdenOnboardingViewState extends State<EdenOnboardingView> {
     );
   }
 }
-
 
 class CustomTextButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -129,9 +132,10 @@ class CustomTextButton extends StatelessWidget {
       child: Text(
         text,
         style: TextStyle(
-            color: color ?? const Color(0xFF329494),
-            fontSize: fontSize ?? 14,
-            fontWeight: FontWeight.bold),
+          color: color ?? const Color(0xFF329494),
+          fontSize: fontSize ?? 14,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
@@ -167,10 +171,8 @@ class _PrimaryButtonState extends State<PrimaryButton>
   final Tween<double> _tween = Tween<double>(begin: 1.0, end: 0.95);
   @override
   void initState() {
-    _controller = AnimationController(
-      vsync: this,
-      duration: _animationDuration,
-    )..addListener(() {
+    _controller = AnimationController(vsync: this, duration: _animationDuration)
+      ..addListener(() {
         setState(() {});
       });
     super.initState();
@@ -207,18 +209,17 @@ class _PrimaryButtonState extends State<PrimaryButton>
           alignment: Alignment.center,
           width: widget.width ?? double.maxFinite,
           decoration: BoxDecoration(
-            color: widget.color ??
+            color:
+                widget.color ??
                 (isDarkMode(context) ? Colors.black : const Color(0xFF329494)),
             boxShadow: [
               BoxShadow(
                 color: const Color(0xFF329494).withOpacity(0.2),
                 blurRadius: 7,
                 offset: const Offset(0, 5),
-              )
+              ),
             ],
-            borderRadius: BorderRadius.circular(
-              widget.borderRadius ?? 10,
-            ),
+            borderRadius: BorderRadius.circular(widget.borderRadius ?? 10),
           ),
           child: Text(
             widget.text,
@@ -265,10 +266,7 @@ class CustomIndicator extends StatelessWidget {
 
 class OnboardingCard extends StatelessWidget {
   final Onboarding onboarding;
-  const OnboardingCard({
-    required this.onboarding,
-    super.key,
-  });
+  const OnboardingCard({required this.onboarding, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -279,7 +277,10 @@ class OnboardingCard extends StatelessWidget {
           child: Text(
             onboarding.title,
             style: const TextStyle(
-                fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
             textAlign: TextAlign.center,
           ),
         ),
@@ -289,7 +290,10 @@ class OnboardingCard extends StatelessWidget {
           child: Text(
             onboarding.description,
             style: const TextStyle(
-                fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black),
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
             textAlign: TextAlign.center,
           ),
         ),
@@ -314,8 +318,7 @@ List<Onboarding> onboardingList = [
     title: '''Anyone can share
 and sell skills''',
     image: AppImages.kOnboarding1,
-    description:
-        '''Teaching online shouldn’t be
+    description: '''Teaching online shouldn’t be
 complicated and expensive. Learn
 Eden makes it free and easy.''',
   ),
@@ -323,8 +326,7 @@ Eden makes it free and easy.''',
     title: '''Run your business
 anywhere''',
     image: AppImages.kOnboarding2,
-    description:
-        '''Learn Eden helps you find students,
+    description: '''Learn Eden helps you find students,
 drive sales, and manage your
 day-to-day.''',
   ),
@@ -332,8 +334,7 @@ day-to-day.''',
     image: AppImages.kOnboarding3,
     title: '''Discover new
 learning opportunities''',
-    description:
-        '''Expand your knowledge and
+    description: '''Expand your knowledge and
 explore a wide range of subjects
 on Learn Eden.''',
   ),
@@ -350,11 +351,7 @@ class WaveCard extends StatelessWidget {
       height: height ?? 350,
       width: double.infinity,
       color: color ?? AppColors.kPrimary.withOpacity(0.15),
-      child: CustomPaint(
-        painter: WavePainter(
-          color: AppColors.kWhite,
-        ),
-      ),
+      child: CustomPaint(painter: WavePainter(color: AppColors.kWhite)),
     );
   }
 }
@@ -365,16 +362,14 @@ class WavePainter extends CustomPainter {
   WavePainter({required this.color});
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
+    final paint =
+        Paint()
+          ..color = color
+          ..style = PaintingStyle.fill;
 
     final path = Path();
     path.moveTo(size.width, size.height);
-    path.lineTo(
-      size.width,
-      size.height * 0.75,
-    );
+    path.lineTo(size.width, size.height * 0.75);
     path.quadraticBezierTo(
       size.width * 0.85,
       size.height * 0.625,
@@ -425,10 +420,8 @@ class _CustomIconButtonState extends State<CustomIconButton>
   final Tween<double> _tween = Tween<double>(begin: 1.0, end: 0.95);
   @override
   void initState() {
-    _controller = AnimationController(
-      vsync: this,
-      duration: _animationDuration,
-    )..addListener(() {
+    _controller = AnimationController(vsync: this, duration: _animationDuration)
+      ..addListener(() {
         setState(() {});
       });
     super.initState();
@@ -460,15 +453,16 @@ class _CustomIconButtonState extends State<CustomIconButton>
           ),
         ),
         child: Container(
-            height: widget.size ?? 40,
-            alignment: Alignment.center,
-            width: widget.size ?? 40,
-            padding: const EdgeInsets.all(5),
-            decoration: const BoxDecoration(
-              color: AppColors.kWhite,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(Icons.arrow_back)),
+          height: widget.size ?? 40,
+          alignment: Alignment.center,
+          width: widget.size ?? 40,
+          padding: const EdgeInsets.all(5),
+          decoration: const BoxDecoration(
+            color: AppColors.kWhite,
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(Icons.arrow_back),
+        ),
       ),
     );
   }
