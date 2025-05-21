@@ -1,4 +1,4 @@
-package com.example.mentorai
+package com.mentorai.jr
 
 import io.flutter.embedding.android.FlutterActivity
 
