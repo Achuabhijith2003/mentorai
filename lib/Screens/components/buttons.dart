@@ -12,8 +12,8 @@ class CustomSocialButton extends StatelessWidget {
     required this.text,
     required this.icon,
     this.margin,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

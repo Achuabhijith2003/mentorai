@@ -2,6 +2,8 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mentorai/Assets/image.dart';
+import 'package:mentorai/Screens/components/design.dart';
+import 'package:mentorai/Screens/components/textfields.dart';
 import 'package:mentorai/theme/color.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:mentorai/Screens/components/buttons.dart';
@@ -185,7 +187,7 @@ class _FascinateViewState extends State<FascinateView> {
             child: const Center(
               child: Text(
                 '''To give you a personalized experience,
-let us know your interests.''',
+              let us know your interests.''',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
               ),
@@ -205,6 +207,8 @@ let us know your interests.''',
                       selectedCategories.remove(categoriesList[index]);
                     } else {
                       selectedCategories.add(categoriesList[index]);
+                    }
+                    if (widget.onChanged != null) {
                       widget.onChanged!(selectedCategories);
                     }
                     setState(() {});
@@ -295,14 +299,11 @@ class Category {
 }
 
 List<Category> categoriesList = [
-  Category(id: '1', name: 'Gaming', image: AppImages.kGaming),
-  Category(id: '2', name: 'Music', image: AppImages.kMusic),
-  Category(id: '3', name: 'Photography', image: AppImages.kPhotography),
-  Category(id: '4', name: 'Art', image: AppImages.kArt),
-  Category(id: '5', name: 'Design', image: AppImages.kDesign),
-  Category(id: '6', name: 'Business', image: AppImages.kBusiness),
-  Category(id: '7', name: 'LifeStyle', image: AppImages.kLifeStyle),
-  Category(id: '8', name: 'Coding', image: AppImages.kCoding),
+  Category(id: '1', name: '8/9/10', image: AppImages.kGoogle),
+  Category(id: '2', name: '+1/+2', image: AppImages.kGoogle),
+  Category(id: '3', name: 'Engineering', image: AppImages.kGoogle),
+  Category(id: '4', name: 'Coding', image: AppImages.kGoogle),
+  Category(id: '5', name: 'Others', image: AppImages.kGoogle),
 ];
 
 class SetupStoreView extends StatefulWidget {
@@ -327,8 +328,7 @@ class _SetupStoreViewState extends State<SetupStoreView> {
           FadeInRight(
             duration: const Duration(milliseconds: 1000),
             child: const Text(
-              '''What should we call
-your store?''',
+              '''What is your name?''',
               style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
@@ -346,53 +346,16 @@ your store?''',
             duration: const Duration(milliseconds: 1000),
             child: AuthField(
               controller: storeName,
-              hintText: 'Store Name',
+              hintText: 'Name',
               onChanged: (value) {
-                widget.onChanged!(value);
+                if (widget.onChanged != null) {
+                  widget.onChanged!(value);
+                }
               },
             ),
           ),
           const SizedBox(height: 10),
         ],
-      ),
-    );
-  }
-}
-
-class AuthField extends StatelessWidget {
-  final TextEditingController controller;
-  final void Function(String)? onChanged;
-  final String? Function(String?)? validator;
-  final String hintText;
-  const AuthField({
-    required this.controller,
-    required this.hintText,
-    this.onChanged,
-    this.validator,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return PrimaryContainer(
-      child: TextFormField(
-        controller: controller,
-        onChanged: onChanged,
-        validator: validator,
-        decoration: InputDecoration(
-          hintText: hintText,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 16,
-          ),
-          hintStyle: const TextStyle(color: Colors.grey),
-          filled: true,
-          fillColor: Colors.white,
-          enabledBorder: const OutlineInputBorder(borderSide: BorderSide.none),
-          focusedBorder: const OutlineInputBorder(borderSide: BorderSide.none),
-          border: const OutlineInputBorder(borderSide: BorderSide.none),
-          errorBorder: const OutlineInputBorder(borderSide: BorderSide.none),
-        ),
       ),
     );
   }
@@ -412,8 +375,8 @@ class PrimaryContainer extends StatelessWidget {
     this.color,
     this.width,
     this.height,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -577,60 +540,6 @@ browse courses and learn as a student.''',
   }
 }
 
-class WaveCard extends StatelessWidget {
-  final double? height;
-  final Color? color;
-  const WaveCard({super.key, this.height, this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: height ?? 350,
-      width: double.infinity,
-      color: color ?? const Color(0xFF329494).withOpacity(0.15),
-      child: CustomPaint(painter: WavePainter(color: const Color(0xFFFFFFFF))),
-    );
-  }
-}
-
-class WavePainter extends CustomPainter {
-  final Color color;
-
-  WavePainter({required this.color});
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint =
-        Paint()
-          ..color = color
-          ..style = PaintingStyle.fill;
-
-    final path = Path();
-    path.moveTo(size.width, size.height);
-    path.lineTo(size.width, size.height * 0.75);
-    path.quadraticBezierTo(
-      size.width * 0.85,
-      size.height * 0.625,
-      size.width * 0.5,
-      size.height * 0.75,
-    );
-    path.quadraticBezierTo(
-      size.width * 0.25,
-      size.height * 0.875,
-      0,
-      size.height * 0.75,
-    );
-    path.lineTo(0, size.height);
-    path.close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
-  }
-}
-
 class CustomIndicator extends StatelessWidget {
   final PageController controller;
   final int dotsLength;
@@ -649,7 +558,6 @@ class CustomIndicator extends StatelessWidget {
     return SmoothPageIndicator(
       controller: controller,
       count: dotsLength,
-      onDotClicked: (index) {},
       effect: SlideEffect(
         dotColor: const Color(0xFF1D2445).withOpacity(0.3),
         activeDotColor: const Color(0xFF1D2445),
@@ -672,8 +580,8 @@ class CustomIconButton extends StatefulWidget {
     this.size,
     this.color,
     this.iconColor,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<CustomIconButton> createState() => _CustomIconButtonState();
@@ -785,5 +693,19 @@ class _AnimatedButtonState extends State<AnimatedButton>
         child: widget.child,
       ),
     );
+  }
+}
+
+class Signupdetials extends StatefulWidget {
+  const Signupdetials({super.key});
+
+  @override
+  State<Signupdetials> createState() => _SignupdetialsState();
+}
+
+class _SignupdetialsState extends State<Signupdetials> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold();
   }
 }

@@ -2,10 +2,15 @@ import 'dart:math';
 
 import 'package:mentorai/Screens/components/buttons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:mentorai/Assets/image.dart';
 import 'package:mentorai/Screens/Auth/Signup.dart';
+// import 'package:mentorai/Screens/Auth/recovery.dart';
 import 'package:mentorai/Screens/components/buttons.dart' as components;
+import 'package:mentorai/Screens/components/design.dart';
+import 'package:mentorai/Screens/components/textfields.dart';
+import 'package:mentorai/Screens/home.dart';
+import 'package:mentorai/provider/authprovider.dart';
+import 'package:provider/provider.dart';
 
 class SignInView extends StatefulWidget {
   const SignInView({super.key});
@@ -21,6 +26,8 @@ class _SignInViewState extends State<SignInView> {
   final TextEditingController _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<Authprovider>(context, listen: false);
+
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
       body: SingleChildScrollView(
@@ -76,10 +83,19 @@ class _SignInViewState extends State<SignInView> {
                   ),
                   Align(
                     alignment: Alignment.centerRight,
+                    // ...existing code...
                     child: CustomTextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => Recoveryscreen(),
+                        //   ), // <-- add ()
+                        // );
+                      },
                       text: 'Forget Password?',
                     ),
+                    // ...existing code...
                   ),
                 ],
               ),
@@ -89,9 +105,22 @@ class _SignInViewState extends State<SignInView> {
                 shakeOffset: 10.0,
                 shakeDuration: const Duration(milliseconds: 500),
                 child: components.PrimaryButton(
-                  onTap: () {
+                  onTap: () async {
                     if (_emailController.text.isNotEmpty &&
                         _passwordController.text.isNotEmpty) {
+                      bool success = await authProvider
+                          .signinwithEmailandPassword(
+                            _emailController.text.trim(),
+                            _passwordController.text.trim(),
+                          );
+                      if (success) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const Home()),
+                        );
+                      } else {
+                        _shakeKey.currentState?.shake();
+                      }
                     } else {
                       _shakeKey.currentState?.shake();
                     }
@@ -102,15 +131,23 @@ class _SignInViewState extends State<SignInView> {
               const SizedBox(height: 20),
               const DividerWithText(),
               const SizedBox(height: 20),
-              CustomSocialButton(
-                onTap: () {},
-                icon: AppImages.kFaceBook,
-                text: 'Join using Facebook',
-                margin: 0,
-              ),
+              // CustomSocialButton(
+              //   onTap: () {},
+              //   icon: AppImages.kFaceBook,
+              //   text: 'Join using Facebook',
+              //   margin: 0,
+              // ),
               const SizedBox(height: 20),
               CustomSocialButton(
-                onTap: () {},
+                onTap: () async {
+                  bool success = await authProvider.signinwithGoogle();
+                  if (success) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Home()),
+                    );
+                  }
+                },
                 icon: AppImages.kGoogle,
                 text: 'Join using Google',
                 margin: 0,
@@ -170,10 +207,10 @@ class ShakeWidget extends StatefulWidget {
   const ShakeWidget({
     required this.child,
     required this.shakeOffset,
-    Key? key,
+    super.key,
     this.shakeCount = 3,
     this.shakeDuration = const Duration(milliseconds: 400),
-  }) : super(key: key);
+  });
   final Widget child;
   final double shakeOffset;
   final int shakeCount;
@@ -185,7 +222,7 @@ class ShakeWidget extends StatefulWidget {
 }
 
 class ShakeWidgetState extends ShakeAnimation<ShakeWidget> {
-  ShakeWidgetState(Duration duration) : super(duration);
+  ShakeWidgetState(super.duration);
 
   @override
   void initState() {
@@ -256,45 +293,6 @@ class CustomTextButton extends StatelessWidget {
   }
 }
 
-class AuthField extends StatelessWidget {
-  final TextEditingController controller;
-  final void Function(String)? onChanged;
-  final String? Function(String?)? validator;
-  final String hintText;
-  const AuthField({
-    required this.controller,
-    required this.hintText,
-    this.onChanged,
-    this.validator,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return PrimaryContainer(
-      child: TextFormField(
-        controller: controller,
-        onChanged: onChanged,
-        validator: validator,
-        decoration: InputDecoration(
-          hintText: hintText,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 16,
-          ),
-          hintStyle: const TextStyle(color: Colors.grey),
-          filled: true,
-          fillColor: Colors.white,
-          enabledBorder: const OutlineInputBorder(borderSide: BorderSide.none),
-          focusedBorder: const OutlineInputBorder(borderSide: BorderSide.none),
-          border: const OutlineInputBorder(borderSide: BorderSide.none),
-          errorBorder: const OutlineInputBorder(borderSide: BorderSide.none),
-        ),
-      ),
-    );
-  }
-}
-
 class PrimaryContainer extends StatelessWidget {
   final Widget child;
   final EdgeInsets? padding;
@@ -309,8 +307,8 @@ class PrimaryContainer extends StatelessWidget {
     this.color,
     this.width,
     this.height,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

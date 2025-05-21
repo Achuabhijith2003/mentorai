@@ -11,7 +11,7 @@ class AppImages {
   // Signup images or icons
   static String kTeacher = 'Assets/images/teacher.png';
   static String kStudent = 'Assets/images/student.png';
-  static String kStoreSetup = 'Assets/images/store_setup.png';
+  static String kStoreSetup = 'Assets/images/student.png';
   static String kGaming = 'Assets/svg/gaming.svg';
   static String kMusic = 'Assets/svg/music.svg';
   static String kPhotography = 'Assets/svg/photography.svg';
