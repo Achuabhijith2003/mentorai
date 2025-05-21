@@ -8,7 +8,9 @@ import 'package:mentorai/theme/color.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:mentorai/Screens/components/buttons.dart';
 
-enum UserType { teacher, student }
+enum UserType { teacher, student, none }
+
+late UserType selecteduserType;
 
 class SignUpView extends StatefulWidget {
   const SignUpView({super.key});
@@ -71,6 +73,26 @@ class _SignUpViewState extends State<SignUpView> with TickerProviderStateMixin {
     return Scaffold(
       backgroundColor: AppColors.kWhite,
       extendBodyBehindAppBar: true,
+      appBar:
+          _currentIndex > 0
+              ? AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                leadingWidth: 70,
+                leading: Padding(
+                  padding: const EdgeInsets.all(7),
+                  child: CustomIconButton(
+                    onTap: () {
+                      _pageController.previousPage(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.ease,
+                      );
+                    },
+                    icon: '',
+                  ),
+                ),
+              )
+              : null,
       body: Column(
         children: [
           Expanded(
@@ -88,6 +110,9 @@ class _SignUpViewState extends State<SignUpView> with TickerProviderStateMixin {
                   children: [
                     UserTypeView(
                       onUserTypeSelected: (userType) {
+                        setState(() {
+                          selecteduserType = userType;
+                        });
                         debugPrint(userType.toString());
                       },
                     ),
@@ -101,7 +126,11 @@ class _SignUpViewState extends State<SignUpView> with TickerProviderStateMixin {
                         debugPrint(categories.toString());
                       },
                     ),
-                    // const SetupCompleteView(),
+                    Signupdetials(
+                      onChanged: (detials) {
+                        debugPrint(detials.toString());
+                      },
+                    ),
                   ],
                 ),
               ],
@@ -131,7 +160,14 @@ class _SignUpViewState extends State<SignUpView> with TickerProviderStateMixin {
                       text: 'Continue',
                     )
                     : AnimatedBuilder(
-                      animation: scaleAnimation,
+                      animation: scaleController,
+                      child: PrimaryButton(
+                        onTap: () {
+                          debugPrint('Create Account');
+                        },
+                        text: 'Create Account',
+                        color: Colors.deepOrange,
+                      ),
                       builder:
                           (context, child) => Transform.scale(
                             scale: scaleAnimation.value,
@@ -143,7 +179,7 @@ class _SignUpViewState extends State<SignUpView> with TickerProviderStateMixin {
                                   scaleController.isAnimating ||
                                           scaleController.isCompleted
                                       ? ''
-                                      : 'Continue',
+                                      : 'Create Account',
                             ),
                           ),
                     ),
@@ -323,16 +359,28 @@ class _SetupStoreViewState extends State<SetupStoreView> {
       child: Column(
         children: [
           const Spacer(),
-          Image.asset(AppImages.kStoreSetup),
-          const SizedBox(height: 90),
-          FadeInRight(
-            duration: const Duration(milliseconds: 1000),
-            child: const Text(
-              '''What is your name?''',
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
+          if (selecteduserType == UserType.teacher) ...[
+            Image.asset(AppImages.kTeacher),
+            const SizedBox(height: 90),
+            FadeInLeft(
+              duration: const Duration(milliseconds: 1000),
+              child: const Text(
+                'What is your name?',
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              ),
             ),
-          ),
+          ] else ...[
+            Image.asset(AppImages.kStudent),
+            const SizedBox(height: 90),
+            FadeInRight(
+              duration: const Duration(milliseconds: 1000),
+              child: const Text(
+                '''What is your name?''',
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
           const SizedBox(height: 10),
           FadeInRight(
             duration: const Duration(milliseconds: 1000),
@@ -460,7 +508,7 @@ class UserTypeView extends StatefulWidget {
 }
 
 class _UserTypeViewState extends State<UserTypeView> {
-  UserType userType = UserType.teacher;
+  late UserType userType = UserType.none;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -568,82 +616,6 @@ class CustomIndicator extends StatelessWidget {
   }
 }
 
-class CustomIconButton extends StatefulWidget {
-  final VoidCallback onTap;
-  final double? size;
-  final Color? color;
-  final String icon;
-  final Color? iconColor;
-  const CustomIconButton({
-    required this.onTap,
-    required this.icon,
-    this.size,
-    this.color,
-    this.iconColor,
-    super.key,
-  });
-
-  @override
-  State<CustomIconButton> createState() => _CustomIconButtonState();
-}
-
-class _CustomIconButtonState extends State<CustomIconButton>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  final Duration _animationDuration = const Duration(milliseconds: 300);
-  final Tween<double> _tween = Tween<double>(begin: 1.0, end: 0.95);
-  @override
-  void initState() {
-    _controller = AnimationController(vsync: this, duration: _animationDuration)
-      ..addListener(() {
-        setState(() {});
-      });
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    bool isDarkMode(BuildContext context) =>
-        Theme.of(context).brightness == Brightness.dark;
-    return GestureDetector(
-      onTap: () {
-        _controller.forward().then((_) {
-          _controller.reverse();
-        });
-        widget.onTap();
-      },
-      child: ScaleTransition(
-        scale: _tween.animate(
-          CurvedAnimation(
-            parent: _controller,
-            curve: Curves.easeOut,
-            reverseCurve: Curves.easeIn,
-          ),
-        ),
-        child: Container(
-          height: widget.size ?? 40,
-          alignment: Alignment.center,
-          width: widget.size ?? 40,
-          padding: const EdgeInsets.all(5),
-          decoration: BoxDecoration(
-            color:
-                widget.color ??
-                (isDarkMode(context) ? Colors.black : const Color(0xFFFFFFFF)),
-            shape: BoxShape.circle,
-          ),
-          child: const Placeholder(),
-        ),
-      ),
-    );
-  }
-}
-
 class AnimatedButton extends StatefulWidget {
   final Widget child;
   final VoidCallback onTap;
@@ -697,15 +669,52 @@ class _AnimatedButtonState extends State<AnimatedButton>
 }
 
 class Signupdetials extends StatefulWidget {
-  const Signupdetials({super.key});
+  final Function(dynamic detials) onChanged;
+  const Signupdetials({super.key, required this.onChanged});
 
   @override
   State<Signupdetials> createState() => _SignupdetialsState();
 }
 
 class _SignupdetialsState extends State<Signupdetials> {
+  TextEditingController emailcontroller = TextEditingController();
+  TextEditingController passwordcontroller = TextEditingController();
+  TextEditingController repasswordcontroller = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          const Spacer(),
+          Image.asset(AppImages.kOnboarding3),
+          Text("data"),
+          AuthField(
+            controller: emailcontroller,
+            hintText: "Email",
+            onChanged: (value) {
+              widget.onChanged(value);
+            },
+          ),
+          const SizedBox(height: 20),
+          AuthField(
+            controller: passwordcontroller,
+            hintText: "Password",
+            onChanged: (value) {
+              widget.onChanged(value);
+            },
+          ),
+          const SizedBox(height: 20),
+          AuthField(
+            controller: repasswordcontroller,
+            hintText: "Re-enter password",
+            onChanged: (value) {
+              widget.onChanged(value);
+            },
+          ),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
   }
 }

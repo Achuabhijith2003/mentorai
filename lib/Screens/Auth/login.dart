@@ -6,7 +6,6 @@ import 'package:mentorai/Assets/image.dart';
 import 'package:mentorai/Screens/Auth/Signup.dart';
 // import 'package:mentorai/Screens/Auth/recovery.dart';
 import 'package:mentorai/Screens/components/buttons.dart' as components;
-import 'package:mentorai/Screens/components/design.dart';
 import 'package:mentorai/Screens/components/textfields.dart';
 import 'package:mentorai/Screens/home.dart';
 import 'package:mentorai/provider/authprovider.dart';

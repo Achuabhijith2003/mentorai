@@ -67,6 +67,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "425002886911-n8taol1ub69146at0pi553ma21kll0k6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mentorai.jr",
+            "certificate_hash": "aed6285633ab4efaeb55b207b55813abb68ecc32"
+          }
+        },
+        {
           "client_id": "425002886911-j19b990h3d2052gat20ip0ltebn5n2nc.apps.googleusercontent.com",
           "client_type": 3
         }

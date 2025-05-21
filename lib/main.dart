@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mentorai/Screens/onboard/onboard.dart';
 import 'package:mentorai/provider/authprovider.dart';
+import 'package:mentorai/firebase_options.dart';
 
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensure binding
-  await Firebase.initializeApp(); // Initialize Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  ); // Initialize Firebase
 
   runApp(
     ChangeNotifierProvider(
