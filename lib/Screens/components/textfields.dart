@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:mentorai/Screens/Auth/login.dart';
 
@@ -36,18 +35,23 @@ class AuthField extends StatelessWidget {
   final void Function(String)? onChanged;
   final String? Function(String?)? validator;
   final String hintText;
+  final bool? obscureText;
+  final String? errorText;
   const AuthField({
     required this.controller,
     required this.hintText,
     this.onChanged,
     this.validator,
     super.key,
+    this.obscureText,
+    this.errorText,
   });
 
   @override
   Widget build(BuildContext context) {
     return PrimaryContainer(
       child: TextFormField(
+        forceErrorText: errorText,
         controller: controller,
         onChanged: onChanged,
         validator: validator,

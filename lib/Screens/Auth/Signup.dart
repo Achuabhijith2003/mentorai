@@ -2,15 +2,20 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mentorai/Assets/image.dart';
+import 'package:mentorai/Screens/Auth/login.dart';
 import 'package:mentorai/Screens/components/design.dart';
 import 'package:mentorai/Screens/components/textfields.dart';
+import 'package:mentorai/provider/authprovider.dart';
 import 'package:mentorai/theme/color.dart';
+import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:mentorai/Screens/components/buttons.dart';
 
 enum UserType { teacher, student, none }
 
-late UserType selecteduserType;
+UserType selecteduserType = UserType.none;
+late String userName;
+late String selectedcategories;
 
 class SignUpView extends StatefulWidget {
   const SignUpView({super.key});
@@ -23,49 +28,91 @@ class _SignUpViewState extends State<SignUpView> with TickerProviderStateMixin {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
 
-  late AnimationController rippleController;
-  late AnimationController scaleController;
-  late Animation<double> rippleAnimation;
-  late Animation<double> scaleAnimation;
+  UserType? _selectedUserType;
+  String? _userName;
+  String? _selectedCategories;
+  String? _email;
+  String? _password;
+  String? _repassword;
 
-  @override
-  void initState() {
-    super.initState();
-    rippleController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    );
-    scaleController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    )..addStatusListener((status) {
-      if (status == AnimationStatus.completed) {}
-    });
+  // Validation helpers
+  bool get isUserTypeValid =>
+      _selectedUserType != null && _selectedUserType != UserType.none;
+  bool get isUserNameValid => _userName != null && _userName!.trim().isNotEmpty;
+  bool get isCategoriesValid =>
+      _selectedCategories != null && _selectedCategories!.trim().isNotEmpty;
+  bool get isEmailValid => _email != null && _email!.contains("@");
+  bool get isPasswordValid => _password != null && _password!.length >= 6;
+  bool get isRepasswordValid => _repassword != null && _repassword == _password;
 
-    rippleAnimation = Tween<double>(
-      begin: 80.0,
-      end: 90.0,
-    ).animate(rippleController)..addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        rippleController.reverse();
-      } else if (status == AnimationStatus.dismissed) {
-        rippleController.forward();
-      }
-    });
-
-    scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 30.0,
-    ).animate(scaleController);
-
-    rippleController.forward();
+  void _nextPage() {
+    if (_currentIndex == 0 && !isUserTypeValid) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a user type')),
+      );
+      return;
+    }
+    if (_currentIndex == 1 && !isUserNameValid) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please enter your name')));
+      return;
+    }
+    if (_currentIndex == 2 && !isCategoriesValid) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select at least one category')),
+      );
+      return;
+    }
+    if (_currentIndex == 3 &&
+        (!isEmailValid || !isPasswordValid || !isRepasswordValid)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all details correctly')),
+      );
+      return;
+    }
+    if (_currentIndex < 3) {
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.fastOutSlowIn,
+      );
+      setState(() {
+        _currentIndex++;
+      });
+    }
   }
 
-  @override
-  void dispose() {
-    rippleController.dispose();
-    scaleController.dispose();
-    super.dispose();
+  Future<void> _createAccount() async {
+    debugPrint(
+      'UserType: $_selectedUserType userName: $_userName categories: $_selectedCategories',
+    );
+    debugPrint('Email: $_email password: $_password repassword: $_repassword');
+    debugPrint(
+      'Email: $isEmailValid password: $isPasswordValid repassword: $isRepasswordValid',
+    );
+    if (!isEmailValid || !isPasswordValid || !isRepasswordValid) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all details correctly')),
+      );
+      return;
+    }
+    final authProvider = Provider.of<Authprovider>(context, listen: false);
+    bool success = await authProvider.signupwithEmailandPassword(
+      _email!,
+      _password!,
+      _userName ?? '',
+      _selectedCategories ?? '',
+    );
+    if (success) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const SignInView()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Signup failed. Please try again.')),
+      );
+    }
   }
 
   @override
@@ -87,6 +134,9 @@ class _SignUpViewState extends State<SignUpView> with TickerProviderStateMixin {
                         duration: const Duration(milliseconds: 500),
                         curve: Curves.ease,
                       );
+                      setState(() {
+                        _currentIndex--;
+                      });
                     },
                     icon: '',
                   ),
@@ -111,24 +161,37 @@ class _SignUpViewState extends State<SignUpView> with TickerProviderStateMixin {
                     UserTypeView(
                       onUserTypeSelected: (userType) {
                         setState(() {
-                          selecteduserType = userType;
+                          _selectedUserType = userType;
                         });
-                        debugPrint(userType.toString());
                       },
                     ),
                     SetupStoreView(
                       onChanged: (value) {
-                        debugPrint(value);
+                        setState(() {
+                          _userName = value;
+                        });
                       },
                     ),
                     FascinateView(
                       onChanged: (categories) {
-                        debugPrint(categories.toString());
+                        setState(() {
+                          if (categories != null && categories.isNotEmpty) {
+                            _selectedCategories = categories
+                                .map((c) => c.name)
+                                .join(', ');
+                          }
+                        });
                       },
                     ),
                     Signupdetials(
-                      onChanged: (detials) {
-                        debugPrint(detials.toString());
+                      onChanged: (details) {
+                        setState(() {
+                          if (details is Map) {
+                            _email = details['email'];
+                            _password = details['password'];
+                            _repassword = details['repassword'];
+                          }
+                        });
                       },
                     ),
                   ],
@@ -143,45 +206,10 @@ class _SignUpViewState extends State<SignUpView> with TickerProviderStateMixin {
             padding: const EdgeInsets.all(20),
             child:
                 _currentIndex < 3
-                    ? PrimaryButton(
-                      onTap: () {
-                        FocusScope.of(context).unfocus();
-                        Future<void>.delayed(
-                          const Duration(milliseconds: 500),
-                        ).then(
-                          (value) => {
-                            _pageController.nextPage(
-                              duration: const Duration(milliseconds: 500),
-                              curve: Curves.fastOutSlowIn,
-                            ),
-                          },
-                        );
-                      },
-                      text: 'Continue',
-                    )
-                    : AnimatedBuilder(
-                      animation: scaleController,
-                      child: PrimaryButton(
-                        onTap: () {
-                          debugPrint('Create Account');
-                        },
-                        text: 'Create Account',
-                        color: Colors.deepOrange,
-                      ),
-                      builder:
-                          (context, child) => Transform.scale(
-                            scale: scaleAnimation.value,
-                            child: PrimaryButton(
-                              onTap: () {
-                                scaleController.forward();
-                              },
-                              text:
-                                  scaleController.isAnimating ||
-                                          scaleController.isCompleted
-                                      ? ''
-                                      : 'Create Account',
-                            ),
-                          ),
+                    ? PrimaryButton(onTap: _nextPage, text: 'Continue')
+                    : PrimaryButton(
+                      onTap: _createAccount,
+                      text: 'Create Account',
                     ),
           ),
         ],
@@ -239,15 +267,18 @@ class _FascinateViewState extends State<FascinateView> {
                 categoriesList.length,
                 (index) => CustomChips(
                   onTap: () {
-                    if (selectedCategories.contains(categoriesList[index])) {
-                      selectedCategories.remove(categoriesList[index]);
-                    } else {
-                      selectedCategories.add(categoriesList[index]);
-                    }
-                    if (widget.onChanged != null) {
-                      widget.onChanged!(selectedCategories);
-                    }
-                    setState(() {});
+                    setState(() {
+                      if (selectedCategories.contains(categoriesList[index])) {
+                        selectedCategories.clear();
+                      } else {
+                        selectedCategories
+                          ..clear()
+                          ..add(categoriesList[index]);
+                      }
+                      if (widget.onChanged != null) {
+                        widget.onChanged!(selectedCategories);
+                      }
+                    });
                   },
                   index: index,
                   category: categoriesList[index],
@@ -351,7 +382,7 @@ class SetupStoreView extends StatefulWidget {
 }
 
 class _SetupStoreViewState extends State<SetupStoreView> {
-  final TextEditingController storeName = TextEditingController();
+  final TextEditingController Name = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -393,11 +424,16 @@ class _SetupStoreViewState extends State<SetupStoreView> {
           FadeInLeft(
             duration: const Duration(milliseconds: 1000),
             child: AuthField(
-              controller: storeName,
+              controller: Name,
               hintText: 'Name',
               onChanged: (value) {
                 if (widget.onChanged != null) {
                   widget.onChanged!(value);
+                  userName = value;
+                } else {
+                  debugPrint('Name is null');
+                  userName = "Unknown";
+                  widget.onChanged!("Unknown");
                 }
               },
             ),
@@ -677,39 +713,96 @@ class Signupdetials extends StatefulWidget {
 }
 
 class _SignupdetialsState extends State<Signupdetials> {
-  TextEditingController emailcontroller = TextEditingController();
-  TextEditingController passwordcontroller = TextEditingController();
-  TextEditingController repasswordcontroller = TextEditingController();
+  final TextEditingController emailcontroller = TextEditingController();
+  final TextEditingController passwordcontroller = TextEditingController();
+  final TextEditingController repasswordcontroller = TextEditingController();
+
+  String? emailError;
+  String? passwordError;
+  String? repasswordError;
+
+  bool isEmailValid(String email) {
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    return emailRegex.hasMatch(email);
+  }
+
+  void validateFields() {
+    setState(() {
+      emailError = null;
+      passwordError = null;
+      repasswordError = null;
+
+      if (emailcontroller.text.isEmpty) {
+        emailError = 'Email is required';
+      } else if (!isEmailValid(emailcontroller.text)) {
+        emailError = 'Enter a valid email';
+      }
+
+      if (passwordcontroller.text.isEmpty) {
+        passwordError = 'Password is required';
+      } else if (passwordcontroller.text.length < 6) {
+        passwordError = 'Password must be at least 6 characters';
+      }
+
+      if (repasswordcontroller.text.isEmpty) {
+        repasswordError = 'Please re-enter your password';
+      } else if (repasswordcontroller.text != passwordcontroller.text) {
+        repasswordError = 'Passwords do not match';
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
           const Spacer(),
           Image.asset(AppImages.kOnboarding3),
-          Text("data"),
+          // Remove the "data" text or replace with a title if needed
+          // In Signupdetials, update onChanged for each AuthField:
           AuthField(
             controller: emailcontroller,
             hintText: "Email",
+            errorText: emailError,
             onChanged: (value) {
-              widget.onChanged(value);
+              widget.onChanged({
+                'email': emailcontroller.text,
+                'password': passwordcontroller.text,
+                'repassword': repasswordcontroller.text,
+              });
+              if (emailError != null) validateFields();
             },
+            obscureText: false,
           ),
-          const SizedBox(height: 20),
+          // ...repeat for password and repassword fields:
           AuthField(
             controller: passwordcontroller,
             hintText: "Password",
+            obscureText: true,
+            errorText: passwordError,
             onChanged: (value) {
-              widget.onChanged(value);
+              widget.onChanged({
+                'email': emailcontroller.text,
+                'password': passwordcontroller.text,
+                'repassword': repasswordcontroller.text,
+              });
+              if (passwordError != null) validateFields();
             },
           ),
-          const SizedBox(height: 20),
           AuthField(
             controller: repasswordcontroller,
             hintText: "Re-enter password",
+            obscureText: true,
+            errorText: repasswordError,
             onChanged: (value) {
-              widget.onChanged(value);
+              widget.onChanged({
+                'email': emailcontroller.text,
+                'password': passwordcontroller.text,
+                'repassword': repasswordcontroller.text,
+              });
+              if (repasswordError != null) validateFields();
             },
           ),
           const SizedBox(height: 20),

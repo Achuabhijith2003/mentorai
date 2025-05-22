@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Authprovider extends ChangeNotifier {
-  
   get userid => FirebaseAuth.instance.currentUser?.uid;
   // sign with google
   signinwithGoogle() async {
@@ -56,11 +56,23 @@ class Authprovider extends ChangeNotifier {
     }
   }
 
-signupwithEmailandPassword(String email, String password ) async {
+  signupwithEmailandPassword(
+    String email,
+    String password,
+    String name,
+    String catagories,
+  ) async {
     try {
       final userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
       print('Signed up as: ${userCredential.user?.email}');
+      // After successful signup, create user in Firestore
+      await createuserdb(
+        name,
+        email,
+        userCredential.user?.uid ?? '',
+        catagories,
+      );
       return true;
     } catch (e) {
       print('Error signing up: $e');
@@ -68,4 +80,20 @@ signupwithEmailandPassword(String email, String password ) async {
     }
   }
 
+  createuserdb(
+    String name,
+    String email,
+    String userid,
+    String Catagories,
+  ) async {
+    try {
+      await FirebaseFirestore.instance.collection('mentoruser').doc(userid).set(
+        {'name': name, 'email': email, 'uid': userid, 'Catagories': Catagories},
+      );
+      return true;
+    } catch (e) {
+      print('Error creating user: $e');
+      return false;
+    }
+  }
 }

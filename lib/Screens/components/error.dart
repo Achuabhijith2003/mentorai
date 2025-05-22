@@ -11,19 +11,16 @@ class _ErrorbottomState extends State<Errorbottom> {
   @override
   Widget build(BuildContext context) {
     return ScaffoldMessenger(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Center(
-          child: Container(
-            height: 50,
-            width: 300,
-            decoration: BoxDecoration(
-              color: Colors.red,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Center(
-              child: Text('Error', style: TextStyle(color: Colors.white)),
-            ),
+      child: Center(
+        child: Container(
+          height: 50,
+          width: 300,
+          decoration: BoxDecoration(
+            color: Colors.red,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: const Center(
+            child: Text('Error', style: TextStyle(color: Colors.white)),
           ),
         ),
       ),
