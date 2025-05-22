@@ -3,6 +3,8 @@ import 'package:mentorai/Assets/image.dart';
 import 'package:mentorai/Screens/components/buttons.dart';
 import 'package:mentorai/Screens/components/design.dart';
 import 'package:mentorai/Screens/components/textfields.dart';
+import 'package:mentorai/provider/authprovider.dart';
+import 'package:provider/provider.dart';
 
 class Recovery extends StatefulWidget {
   const Recovery({super.key});
@@ -16,6 +18,7 @@ class _RecoveryState extends State<Recovery> {
 
   @override
   Widget build(BuildContext context) {
+    final authprovider = Provider.of<Authprovider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(title: Text("Account Recovery")),
       body: Stack(
@@ -40,10 +43,36 @@ class _RecoveryState extends State<Recovery> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                AuthField(controller: recovercontroller, hintText: "Emailid"),
+                AuthField(
+                  controller: recovercontroller,
+                  hintText: "Enter Email",
+                ),
                 const SizedBox(height: 16),
                 Center(
-                  child: PrimaryButton(onTap: () {}, text: "Send to Email"),
+                  child: PrimaryButton(
+                    onTap: () {
+                      if (recovercontroller.text.isNotEmpty) {
+                        authprovider.passwordrecovery(
+                          recovercontroller.text.trim(),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "Check your email for recovery instructions",
+                            ),
+                          ),
+                        );
+                        Navigator.pop(context);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Please enter a valid email"),
+                          ),
+                        );
+                      }
+                    },
+                    text: "Send to Email",
+                  ),
                 ),
               ],
             ),

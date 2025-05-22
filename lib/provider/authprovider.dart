@@ -96,4 +96,16 @@ class Authprovider extends ChangeNotifier {
       return false;
     }
   }
+
+ passwordrecovery(String email) async {
+  try {
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+    print('Password reset email sent');
+    return true;
+  } catch (e) {
+    print('Error sending password reset email: $e');
+    return false;
+  }
+}
+
 }
