@@ -10,6 +10,7 @@ import 'package:mentorai/theme/color.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:mentorai/Screens/components/buttons.dart';
+import 'package:mentorai/Screens/components/responsive.dart';
 
 enum UserType { teacher, student, none }
 
@@ -143,77 +144,98 @@ class _SignUpViewState extends State<SignUpView> with TickerProviderStateMixin {
                 ),
               )
               : null,
-      body: Column(
-        children: [
-          Expanded(
+      body: Responsive(
+        mobile: Stack(
+          children: [
+            Positioned.fill(child: WaveCard()),
+            _buildSignUpContent(context),
+          ],
+        ),
+        desktop: Center(
+          child: SizedBox(
+            width: 500,
             child: Stack(
               children: [
-                const WaveCard(height: 495),
-                PageView(
-                  controller: _pageController,
-                  physics: const NeverScrollableScrollPhysics(),
-                  onPageChanged: (index) {
-                    setState(() {
-                      _currentIndex = index;
-                    });
-                  },
-                  children: [
-                    UserTypeView(
-                      onUserTypeSelected: (userType) {
-                        setState(() {
-                          _selectedUserType = userType;
-                        });
-                      },
-                    ),
-                    SetupStoreView(
-                      onChanged: (value) {
-                        setState(() {
-                          _userName = value;
-                        });
-                      },
-                    ),
-                    FascinateView(
-                      onChanged: (categories) {
-                        setState(() {
-                          if (categories != null && categories.isNotEmpty) {
-                            _selectedCategories = categories
-                                .map((c) => c.name)
-                                .join(', ');
-                          }
-                        });
-                      },
-                    ),
-                    Signupdetials(
-                      onChanged: (details) {
-                        setState(() {
-                          if (details is Map) {
-                            _email = details['email'];
-                            _password = details['password'];
-                            _repassword = details['repassword'];
-                          }
-                        });
-                      },
-                    ),
-                  ],
-                ),
+                Positioned.fill(child: WaveCard()),
+                _buildSignUpContent(context),
               ],
             ),
           ),
-          const SizedBox(height: 30),
-          CustomIndicator(controller: _pageController, dotsLength: 4),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child:
-                _currentIndex < 3
-                    ? PrimaryButton(onTap: _nextPage, text: 'Continue')
-                    : PrimaryButton(
-                      onTap: _createAccount,
-                      text: 'Create Account',
-                    ),
-          ),
-        ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildSignUpContent(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(
+          child: Stack(
+            children: [
+              PageView(
+                controller: _pageController,
+                physics: const NeverScrollableScrollPhysics(),
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                },
+                children: [
+                  UserTypeView(
+                    onUserTypeSelected: (userType) {
+                      setState(() {
+                        _selectedUserType = userType;
+                      });
+                    },
+                  ),
+                  SetupStoreView(
+                    onChanged: (value) {
+                      setState(() {
+                        _userName = value;
+                      });
+                    },
+                  ),
+                  FascinateView(
+                    onChanged: (categories) {
+                      setState(() {
+                        if (categories != null && categories.isNotEmpty) {
+                          _selectedCategories = categories
+                              .map((c) => c.name)
+                              .join(', ');
+                        }
+                      });
+                    },
+                  ),
+                  Signupdetials(
+                    onChanged: (details) {
+                      setState(() {
+                        if (details is Map) {
+                          _email = details['email'];
+                          _password = details['password'];
+                          _repassword = details['repassword'];
+                        }
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 30),
+        CustomIndicator(controller: _pageController, dotsLength: 4),
+        const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child:
+              _currentIndex < 3
+                  ? PrimaryButton(onTap: _nextPage, text: 'Continue')
+                  : PrimaryButton(
+                    onTap: _createAccount,
+                    text: 'Create Account',
+                  ),
+        ),
+      ],
     );
   }
 }

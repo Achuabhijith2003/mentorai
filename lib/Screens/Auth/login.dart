@@ -5,12 +5,12 @@ import 'package:mentorai/Screens/components/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:mentorai/Assets/image.dart';
 import 'package:mentorai/Screens/Auth/Signup.dart';
-// import 'package:mentorai/Screens/Auth/recovery.dart';
 import 'package:mentorai/Screens/components/buttons.dart' as components;
 import 'package:mentorai/Screens/components/textfields.dart';
 import 'package:mentorai/Screens/home.dart';
 import 'package:mentorai/provider/authprovider.dart';
 import 'package:provider/provider.dart';
+import 'package:mentorai/Screens/components/responsive.dart';
 
 class SignInView extends StatefulWidget {
   const SignInView({super.key});
@@ -24,136 +24,139 @@ class _SignInViewState extends State<SignInView> {
   final _shakeKey = GlobalKey<ShakeWidgetState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<Authprovider>(context, listen: false);
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              const SizedBox(height: 100),
-              const Center(
-                child: Text(
-                  'Welcome Back',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                  textAlign: TextAlign.center,
+      body: Responsive(
+        mobile: _buildLoginContent(context, authProvider),
+        desktop: Center(
+          child: SizedBox(
+            width: 500,
+            child: _buildLoginContent(context, authProvider),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoginContent(BuildContext context, Authprovider authProvider) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            const SizedBox(height: 100),
+            const Center(
+              child: Text(
+                'Welcome Back',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
+                textAlign: TextAlign.center,
               ),
-              const Center(
-                child: Text(
-                  'Sign in to unlock exclusive features and personalized content',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.black,
-                  ),
-                  textAlign: TextAlign.center,
+            ),
+            const Center(
+              child: Text(
+                'Sign in to unlock exclusive features and personalized content',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black,
                 ),
+                textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 50),
-              AuthField(controller: _emailController, hintText: 'Enter Email'),
-              const SizedBox(height: 30),
-              AuthField(
-                controller: _passwordController,
-                hintText: 'Enter Password',
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: CustomTextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SignUpView()),
-                        );
-                      },
-                      text: 'Create an Accounts?',
-                    ),
+            ),
+            const SizedBox(height: 50),
+            AuthField(controller: _emailController, hintText: 'Enter Email'),
+            const SizedBox(height: 30),
+            AuthField(
+              controller: _passwordController,
+              hintText: 'Enter Password',
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: CustomTextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SignUpView()),
+                      );
+                    },
+                    text: 'Create an Accounts?',
                   ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    // ...existing code...
-                    child: CustomTextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Recovery(),
-                          ), // <-- add ()
-                        );
-                      },
-                      text: 'Forget Password?',
-                    ),
-                    // ...existing code...
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: CustomTextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Recovery()),
+                      );
+                    },
+                    text: 'Forget Password?',
                   ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              ShakeWidget(
-                key: _shakeKey,
-                shakeOffset: 10.0,
-                shakeDuration: const Duration(milliseconds: 500),
-                child: components.PrimaryButton(
-                  onTap: () async {
-                    if (_emailController.text.isNotEmpty &&
-                        _passwordController.text.isNotEmpty) {
-                      bool success = await authProvider
-                          .signinwithEmailandPassword(
-                            _emailController.text.trim(),
-                            _passwordController.text.trim(),
-                          );
-                      if (success) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => const Home()),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            ShakeWidget(
+              key: _shakeKey,
+              shakeOffset: 10.0,
+              shakeDuration: const Duration(milliseconds: 500),
+              child: components.PrimaryButton(
+                onTap: () async {
+                  if (_emailController.text.isNotEmpty &&
+                      _passwordController.text.isNotEmpty) {
+                    bool success = await authProvider
+                        .signinwithEmailandPassword(
+                          _emailController.text.trim(),
+                          _passwordController.text.trim(),
                         );
-                      } else {
-                        _shakeKey.currentState?.shake();
-                      }
+                    if (success) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const Home()),
+                      );
                     } else {
                       _shakeKey.currentState?.shake();
                     }
-                  },
-                  text: 'Login',
-                ),
-              ),
-              const SizedBox(height: 20),
-              const DividerWithText(),
-              const SizedBox(height: 20),
-              // CustomSocialButton(
-              //   onTap: () {},
-              //   icon: AppImages.kFaceBook,
-              //   text: 'Join using Facebook',
-              //   margin: 0,
-              // ),
-              const SizedBox(height: 20),
-              CustomSocialButton(
-                onTap: () async {
-                  bool success = await authProvider.signinwithGoogle();
-                  if (success) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const Home()),
-                    );
+                  } else {
+                    _shakeKey.currentState?.shake();
                   }
                 },
-                icon: AppImages.kGoogle,
-                text: 'Join using Google',
-                margin: 0,
+                text: 'Login',
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 20),
+            const DividerWithText(),
+            const SizedBox(height: 20),
+            const SizedBox(height: 20),
+            CustomSocialButton(
+              onTap: () async {
+                bool success = await authProvider.signinwithGoogle();
+                if (success) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Home()),
+                  );
+                }
+              },
+              icon: AppImages.kGoogle,
+              text: 'Join using Google',
+              margin: 0,
+            ),
+          ],
         ),
       ),
     );
@@ -217,7 +220,6 @@ class ShakeWidget extends StatefulWidget {
   final Duration shakeDuration;
 
   @override
-  // ignore: no_logic_in_create_state
   ShakeWidgetState createState() => ShakeWidgetState(shakeDuration);
 }
 
