@@ -1,13 +1,13 @@
 import 'dart:math';
 
 import 'package:mentorai/Screens/Auth/recovery.dart';
+import 'package:mentorai/Screens/checkuser.dart';
 import 'package:mentorai/Screens/components/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:mentorai/Assets/image.dart';
 import 'package:mentorai/Screens/Auth/Signup.dart';
 import 'package:mentorai/Screens/components/buttons.dart' as components;
 import 'package:mentorai/Screens/components/textfields.dart';
-import 'package:mentorai/Screens/home.dart';
 import 'package:mentorai/provider/authprovider.dart';
 import 'package:provider/provider.dart';
 import 'package:mentorai/Screens/components/responsive.dart';
@@ -126,7 +126,7 @@ class _SignInViewState extends State<SignInView> {
                     if (success) {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => const Home()),
+                        MaterialPageRoute(builder: (context) => const Checkuser()),
                       );
                     } else {
                       _shakeKey.currentState?.shake();
@@ -148,7 +148,7 @@ class _SignInViewState extends State<SignInView> {
                 if (success) {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const Home()),
+                    MaterialPageRoute(builder: (context) => const Checkuser()),
                   );
                 }
               },

@@ -103,6 +103,7 @@ class _SignUpViewState extends State<SignUpView> with TickerProviderStateMixin {
       _password!,
       _userName ?? '',
       _selectedCategories ?? '',
+      selecteduserType == UserType.teacher ? 'Teacher' : 'Student',
     );
     if (success) {
       Navigator.pushReplacement(

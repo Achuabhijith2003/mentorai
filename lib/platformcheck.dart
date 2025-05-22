@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mentorai/Screens/Auth/login.dart';
-import 'package:mentorai/Screens/home.dart';
+import 'package:mentorai/Screens/checkuser.dart';
 import 'package:mentorai/Screens/onboard/onboard.dart';
 import 'package:mentorai/provider/authprovider.dart';
 import 'package:provider/provider.dart';
@@ -31,7 +31,7 @@ class Platformcheck extends StatelessWidget {
           if (!onboardingDone) {
             return const EdenOnboardingView();
           } else if (authProvider.userid != null) {
-            return const Home();
+            return const Checkuser();
           } else {
             return const SignInView();
           }
@@ -39,19 +39,19 @@ class Platformcheck extends StatelessWidget {
       );
     } else if (platform == TargetPlatform.windows) {
       if (authProvider.userid != null) {
-        return const Home();
+        return const Checkuser();
       } else {
         return const SignInView();
       }
     } else if (platform == TargetPlatform.fuchsia) {
       if (authProvider.userid != null) {
-        return const Home();
+        return const Checkuser();
       } else {
         return const SignInView();
       }
     } else if (kIsWeb) {
       if (authProvider.userid != null) {
-        return const Home();
+        return const Checkuser();
       } else {
         return const SignInView();
       }

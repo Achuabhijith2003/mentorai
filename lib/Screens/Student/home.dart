@@ -4,20 +4,20 @@ import 'package:mentorai/provider/authprovider.dart';
 import 'package:provider/provider.dart';
 import 'package:mentorai/Screens/components/design.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class Shome extends StatefulWidget {
+  const Shome({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<Shome> createState() => ShomeState();
 }
 
-class _HomeState extends State<Home> {
+class ShomeState extends State<Shome> {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<Authprovider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Home"),
+        title: Text("Home-Student"),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),

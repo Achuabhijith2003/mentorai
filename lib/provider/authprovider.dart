@@ -61,6 +61,7 @@ class Authprovider extends ChangeNotifier {
     String password,
     String name,
     String catagories,
+    String role,
   ) async {
     try {
       final userCredential = await FirebaseAuth.instance
@@ -72,6 +73,7 @@ class Authprovider extends ChangeNotifier {
         email,
         userCredential.user?.uid ?? '',
         catagories,
+        role,
       );
       return true;
     } catch (e) {
@@ -84,11 +86,12 @@ class Authprovider extends ChangeNotifier {
     String name,
     String email,
     String userid,
-    String Catagories,
+    String catagories,
+    String role,
   ) async {
     try {
       await FirebaseFirestore.instance.collection('mentoruser').doc(userid).set(
-        {'name': name, 'email': email, 'uid': userid, 'Catagories': Catagories},
+        {'name': name, 'email': email, 'uid': userid, 'Catagories': catagories, 'role': role},
       );
       return true;
     } catch (e) {
@@ -107,5 +110,29 @@ class Authprovider extends ChangeNotifier {
     return false;
   }
 }
+
+  getUserData() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final doc = await FirebaseFirestore.instance
+            .collection('mentoruser')
+            .doc(user.uid)
+            .get();
+        if (doc.exists) {
+          return doc.data();
+        } else {
+          print('User document does not exist');
+          return null;
+        }
+      } else {
+        print('No user is currently signed in');
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
+      return null;
+    }
+  }
 
 }
