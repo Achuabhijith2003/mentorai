@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mentorai/Screens/Auth/login.dart';
 import 'package:mentorai/provider/authprovider.dart';
 import 'package:provider/provider.dart';
+import 'package:mentorai/Screens/components/design.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -31,6 +32,15 @@ class _HomeState extends State<Home> {
               }
             },
           ),
+        ],
+      ),
+      body: Stack(
+        children: [
+          WaveCard(height: 350, color: Colors.blue.withOpacity(0.15)),
+          Center(
+            child: Text("Welcome to MentorAI", style: TextStyle(fontSize: 24)),
+          ),
+          // Add more widgets here as needed
         ],
       ),
     );

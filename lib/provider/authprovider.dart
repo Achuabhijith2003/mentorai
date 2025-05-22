@@ -3,7 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class Authprovider extends ChangeNotifier {
-  // get userid => authid;
+  
+  get userid => FirebaseAuth.instance.currentUser?.uid;
   // sign with google
   signinwithGoogle() async {
     try {

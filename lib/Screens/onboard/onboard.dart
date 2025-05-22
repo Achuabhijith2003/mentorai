@@ -6,12 +6,25 @@ import 'package:mentorai/Screens/components/design.dart';
 import 'package:mentorai/theme/color.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EdenOnboardingView extends StatefulWidget {
   const EdenOnboardingView({super.key});
 
   @override
   State<EdenOnboardingView> createState() => _EdenOnboardingViewState();
+}
+
+// To save a value
+Future<void> setOnboardingComplete() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('onboarding_complete', true);
+}
+
+// To read a value
+Future<bool> isOnboardingComplete() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('onboarding_complete') ?? false;
 }
 
 class _EdenOnboardingViewState extends State<EdenOnboardingView> {
@@ -78,8 +91,9 @@ class _EdenOnboardingViewState extends State<EdenOnboardingView> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: PrimaryButton(
-              onTap: () {
+              onTap: () async {
                 if (_currentIndex == (onboardingList.length - 1)) {
+                  await setOnboardingComplete();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => SignInView()),
