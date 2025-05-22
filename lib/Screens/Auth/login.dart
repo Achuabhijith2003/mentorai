@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:mentorai/Screens/Auth/recovery.dart';
 import 'package:mentorai/Screens/components/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:mentorai/Assets/image.dart';
@@ -85,12 +86,12 @@ class _SignInViewState extends State<SignInView> {
                     // ...existing code...
                     child: CustomTextButton(
                       onPressed: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => Recoveryscreen(),
-                        //   ), // <-- add ()
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Recovery(),
+                          ), // <-- add ()
+                        );
                       },
                       text: 'Forget Password?',
                     ),
