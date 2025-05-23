@@ -4,7 +4,6 @@ import 'package:mentorai/provider/authprovider.dart';
 import 'package:provider/provider.dart';
 import 'package:mentorai/Screens/Teacher/home.dart';
 import 'package:mentorai/Screens/Student/home.dart';
-import 'package:mentorai/Screens/Auth/login.dart';
 
 class Checkuser extends StatelessWidget {
   const Checkuser({super.key});
@@ -37,7 +36,7 @@ class Checkuser extends StatelessWidget {
           // User data is not in the expected format
           return const SignUpView();
         }
-        if (cat != null && cat == 'teacher') {
+        if (cat == 'teacher') {
           debugPrint('User is a teacher');
           return const Thome();
         } else {
