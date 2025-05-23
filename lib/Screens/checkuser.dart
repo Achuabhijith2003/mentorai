@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mentorai/Screens/Auth/Signup.dart';
 import 'package:mentorai/provider/authprovider.dart';
 import 'package:provider/provider.dart';
 import 'package:mentorai/Screens/Teacher/home.dart';
@@ -27,11 +28,15 @@ class Checkuser extends StatelessWidget {
         final userData = snapshot.data as Map<String, dynamic>?;
         if (userData == null) {
           // User data not found, go to login
-          return const SignInView();
+          return const SignUpView();
         }
         // You may want to check a specific field, e.g. 'Catagories' or 'role'
         final String? cat = userData['role']?.toString().toLowerCase();
-        debugPrint('User role: \\${userData['role']} (cat: \\${cat})');
+        debugPrint('User role: \\${userData['role']} (cat: \\$cat)');
+        if (cat == null) {
+          // User data is not in the expected format
+          return const SignUpView();
+        }
         if (cat != null && cat == 'teacher') {
           debugPrint('User is a teacher');
           return const Thome();
