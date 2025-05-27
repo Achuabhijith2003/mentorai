@@ -32,7 +32,7 @@ class Checkuser extends StatelessWidget {
         // You may want to check a specific field, e.g. 'Catagories' or 'role'
         final String? cat = userData['role']?.toString().toLowerCase();
         debugPrint('User role: \\${userData['role']} (cat: \\$cat)');
-        if (cat == null) {
+        if (cat == null || cat == '') {
           // User data is not in the expected format
           return const SignUpView();
         }

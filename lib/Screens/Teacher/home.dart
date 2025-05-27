@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mentorai/Assets/image.dart';
 import 'package:mentorai/Screens/components/responsive.dart';
 import 'package:mentorai/provider/authprovider.dart';
 import 'package:mentorai/provider/teacherprovider.dart';
 import 'package:provider/provider.dart';
 import 'package:mentorai/Screens/components/design.dart';
+import 'package:mentorai/models/teachermodels.dart';
 
 class Thome extends StatefulWidget {
   const Thome({super.key});
@@ -18,10 +18,10 @@ class _ThomeState extends State<Thome> {
 
   @override
   Widget build(BuildContext context) {
-    // final authProvider = Provider.of<Authprovider>(context, listen: false);
+    final authProvider = Provider.of<Authprovider>(context, listen: false);
     return SafeArea(
       child: Scaffold(
-        drawer: TCustomDrawer(),
+        drawer: TCustomDrawer(authProvider: authProvider),
         body: Responsive(
           mobile: Stack(
             children: [
@@ -53,7 +53,7 @@ class _ThomeState extends State<Thome> {
                     ),
                     actions: [
                       IconButton(
-                        icon: const Icon(Icons.logout),
+                        icon: const Icon(Icons.person_4_outlined),
                         onPressed: () {
                           // authProvider.signout().then((value) {
                           //   if (value) {
@@ -71,6 +71,7 @@ class _ThomeState extends State<Thome> {
 
                     backgroundColor: Colors.transparent,
                   ),
+
                   SliverPadding(
                     padding: const EdgeInsets.only(
                       top: 40,
@@ -107,16 +108,59 @@ class _ThomeState extends State<Thome> {
                                 physics: const NeverScrollableScrollPhysics(),
                                 gridDelegate:
                                     const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3, // 2 columns for mobile
+                                      crossAxisCount: 3, // 3 columns for mobile
                                       crossAxisSpacing: 16,
                                       mainAxisSpacing: 16,
                                       childAspectRatio: 1,
                                     ),
-                                itemCount: 5,
+                                itemCount: tmenuList.length,
                                 itemBuilder: (context, index) {
-                                  return Tmenu(
-                                    title: "title",
-                                    image: AppImages.kTeacher,
+                                  final item = tmenuList[index];
+                                  return GestureDetector(
+                                    onTap: item.ontap,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(16),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.2),
+                                            blurRadius: 6,
+                                            offset: Offset(0, 3),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Expanded(
+                                            child: Center(
+                                              child: SizedBox(
+                                                width: 60,
+                                                height: 60,
+                                                child: Image.asset(
+                                                  item.image,
+                                                  fit: BoxFit.contain,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              bottom: 12.0,
+                                            ),
+                                            child: Text(
+                                              item.title,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   );
                                 },
                               ),

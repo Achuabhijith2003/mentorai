@@ -4,6 +4,7 @@ import 'package:mentorai/platformcheck.dart';
 import 'package:provider/provider.dart';
 import 'package:mentorai/provider/authprovider.dart';
 import 'package:mentorai/firebase_options.dart';
+import 'package:mentorai/models/teachermodels.dart';
 
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensure binding
@@ -25,6 +26,7 @@ class MentorAI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: NavigationService.navigatorKey,
       home: Platformcheck(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Poppins'),

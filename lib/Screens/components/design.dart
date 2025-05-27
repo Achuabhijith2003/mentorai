@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mentorai/Screens/Auth/login.dart';
+import 'package:mentorai/provider/authprovider.dart';
 import 'package:mentorai/theme/color.dart';
 
 class WaveCard extends StatelessWidget {
@@ -113,7 +115,8 @@ class Tmenu extends StatelessWidget {
 }
 
 class TCustomDrawer extends StatelessWidget {
-  const TCustomDrawer({super.key});
+  final Authprovider authProvider;
+  const TCustomDrawer({super.key, required this.authProvider});
 
   @override
   Widget build(BuildContext context) {
@@ -150,6 +153,20 @@ class TCustomDrawer extends StatelessWidget {
             title: Text('Settings'),
             onTap: () {
               // Handle settings tap
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.logout),
+            title: Text('Sign Out'),
+            onTap: () {
+              authProvider.signout().then((value) {
+                if (value) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SignInView()),
+                  );
+                }
+              });
             },
           ),
         ],

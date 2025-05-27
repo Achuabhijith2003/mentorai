@@ -23,6 +23,20 @@ class Authprovider extends ChangeNotifier {
         credential,
       );
       print('Signed in with Google: ${userCredential.user?.email}');
+
+      // Create user in Firestore with image URL
+      final user = userCredential.user;
+      if (user != null) {
+        await FirebaseFirestore.instance.collection('mentoruser').doc(user.uid).set({
+          'name': user.displayName ?? '',
+          'email': user.email ?? '',
+          'uid': user.uid,
+          'Catagories': '', // Set default or fetch if needed
+          'role': '', // Set default or fetch if needed
+          'imageUrl': user.photoURL ?? '',
+        }, SetOptions(merge: true));
+      }
+
       notifyListeners();
       return true;
     } catch (e) {
